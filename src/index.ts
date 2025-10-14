@@ -1,8 +1,4 @@
-import {
-  createSolanaRpc,
-  type Rpc,
-  type SolanaRpcApiMainnet,
-} from "@solana/rpc";
+import { type Rpc, type SolanaRpcApiMainnet } from "@solana/rpc";
 import { type Address, type Signature } from "@solana/kit";
 
 import { getAccountList } from "./accountMap";
@@ -11,11 +7,6 @@ import { b58, type AnySwap, type AssetTransfer, type SimpleTx } from "./utils";
 
 import * as System from "./systemProgram";
 import * as JupiterV6 from "./protocols/jupiter/v6";
-
-const rpc = createSolanaRpc("https://api.mainnet-beta.solana.com");
-
-const swapTxSig =
-  "5Epf8Hy5bews1mnnwMG3TKtBfB98nSRzCrfKWjWkzm6UaEamvb4t6K1pPoFMsouzYLjkhn5HDnSy4Qymh4ruhp7m" as Signature;
 
 interface TransactionCounters {
   transferCount: number;
@@ -44,7 +35,7 @@ const determineTransactionType = (
   return "UNKNOWN";
 };
 
-const analyzeTransaction = async (
+export const analyzeTransaction = async (
   rpc: Rpc<SolanaRpcApiMainnet>,
   txHash: Signature,
 ): Promise<SimpleTx> => {
@@ -146,5 +137,3 @@ const analyzeTransaction = async (
     swaps,
   };
 };
-
-console.debug(await analyzeTransaction(rpc, swapTxSig));
