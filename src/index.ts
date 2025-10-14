@@ -91,7 +91,6 @@ const analyzeTransaction = async (
     unknownCount: 0,
   };
 
-  const assetsInTx = new Set<Address>();
   const assetTransfers: AssetTransfer[] = [];
   const swaps: AnySwap[] = [];
 
