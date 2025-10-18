@@ -1,0 +1,5 @@
+The `*.hex` files you see in this project were analyzed with [ImHex, a fast and delightful hex editor](https://github.com/WerWolv/ImHex), which made working on that complex data much more enjoyable. In `custom/`, you will find all the patterns I wrote, alongside an ImHex project; a lot of them depend on `type::base58::Encoded` which can be made available using the project. If the latter doesn't open because it is corrupted (that happened to me a couple of times), don't panic and just re-create it manually in place.
+
+- [EVENT_IX_TAG(le) - Anchor](https://github.com/solana-foundation/anchor/blob/dd1a038761524e09f67c716eb093955ff50c44bd/lang/src/event.rs) | The constant that allows us to determine that this binary payload in a CPI instruction is event data.
+- [Hashing code for the event](https://github.com/solana-foundation/anchor/blob/dd1a038761524e09f67c716eb093955ff50c44bd/lang/attribute/event/src/lib.rs) | see the function `gen_discriminator("event", event_name)` which amounts to `sha256("event:#{event_name}")`
+- [Token program source code](https://github.com/solana-program/token/blob/main/program/src/processor.rs#L227) | `TransferChecked` argument definition
