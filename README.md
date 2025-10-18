@@ -8,6 +8,9 @@ often clutter you repository with a lot of junk you don't need. I understand tha
 
 ## Things left to do for completeness
 
+> [!NOTE]
+> I might get to them if there's enough interest; please ping me on mail (noctisatrae <at> pm.me - where I am the most likely to respond) or Farcaster (I might not get your message sorry).
+
 ### Jupiter v6
 
 - [X] `route`
