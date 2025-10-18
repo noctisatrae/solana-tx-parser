@@ -2,10 +2,18 @@ import { type Rpc, type SolanaRpcApiMainnet } from "@solana/rpc";
 import { type Address, type Signature } from "@solana/kit";
 
 import { getAccountList } from "./accountMap";
-import { JUPITER_V6, SYSTEM_PROGRAM } from "./constants";
+import {
+  JUPITER_V6,
+  SYSTEM_PROGRAM,
+  TOKEN_PROGRAM,
+  TOKEN_PROGRAM_2022,
+  WRAPPED_SOL,
+  WRAPPED_SOL_DECIMALS,
+} from "./constants";
 import { b58, type AnySwap, type AssetTransfer, type SimpleTx } from "./utils";
 
 import * as System from "./systemProgram";
+import * as TokenProgram from "./tokenProgram";
 import * as JupiterV6 from "./protocols/jupiter/v6";
 
 interface TransactionCounters {
@@ -106,6 +114,39 @@ export const analyzeTransaction = async (
         });
 
         counters.transferCount++;
+        break;
+      }
+      case TOKEN_PROGRAM:
+      case TOKEN_PROGRAM_2022: {
+        if (ixData[0] === TokenProgram.TRANSFER_DISCRIMINATOR) {
+          const transfer = TokenProgram.Transfer.decode({
+            accounts,
+            data: ixData,
+          });
+          assetTransfers.push({
+            from: transfer.source,
+            to: transfer.destination,
+            amount: transfer.lamport.toString(),
+            asset: WRAPPED_SOL,
+            decimals: WRAPPED_SOL_DECIMALS,
+          });
+          counters.transferCount++;
+        } else if (ixData[0] === TokenProgram.TRANSFER_CHECKED_DISCRIMINATOR) {
+          const transfer = TokenProgram.TransferChecked.decode({
+            accounts,
+            data: ixData,
+          });
+          assetTransfers.push({
+            from: transfer.source,
+            to: transfer.destination,
+            amount: transfer.amount.toString(),
+            asset: transfer.mint,
+            decimals: transfer.decimals,
+          });
+          counters.transferCount++;
+        }
+
+        counters.systemIxCount++;
         break;
       }
       case JUPITER_V6: {

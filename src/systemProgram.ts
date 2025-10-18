@@ -14,9 +14,15 @@ export const Transfer = {
   ]).decode,
   decode: ({ data, accounts }: SimpleDecoderArgs) => {
     const { amount } = Transfer.rawDecoder(data);
+    const [source, destination] = accounts;
+
+    if (!source || !destination) {
+      throw new Error("Cannot find source or destination in accounts");
+    }
+
     return {
-      source: accounts[0]!.address,
-      destination: accounts[1]!.address,
+      source: source.address,
+      destination: destination.address,
       lamport: amount,
     };
   },

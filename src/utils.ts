@@ -31,6 +31,7 @@ export interface AssetTransfer {
   toOwner?: Address;
   asset: Address;
   amount: string;
+  decimals?: number;
 }
 
 export interface RawSwap {

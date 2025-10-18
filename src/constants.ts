@@ -13,3 +13,4 @@ export const OKX_ROUTER_V2 =
   "6m2CDdhRgxpH4WjvdzxAYbGxwdGUz5MziiL5jek2kBma" as Address;
 export const WRAPPED_SOL =
   "So11111111111111111111111111111111111111112" as Address;
+export const WRAPPED_SOL_DECIMALS = 9;
