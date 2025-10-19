@@ -123,6 +123,7 @@ export const analyzeTransaction = async (
             accounts,
             data: ixData,
           });
+
           assetTransfers.push({
             from: transfer.source,
             to: transfer.destination,
@@ -130,12 +131,14 @@ export const analyzeTransaction = async (
             asset: WRAPPED_SOL,
             decimals: WRAPPED_SOL_DECIMALS,
           });
+
           counters.transferCount++;
         } else if (ixData[0] === TokenProgram.TRANSFER_CHECKED_DISCRIMINATOR) {
           const transfer = TokenProgram.TransferChecked.decode({
             accounts,
             data: ixData,
           });
+
           assetTransfers.push({
             from: transfer.source,
             to: transfer.destination,
@@ -143,6 +146,7 @@ export const analyzeTransaction = async (
             asset: transfer.mint,
             decimals: transfer.decimals,
           });
+
           counters.transferCount++;
         }
 

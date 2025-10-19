@@ -4,7 +4,7 @@ An easily-extendable parser for Solana transactions that demonstrates some of th
 
 - 1) As previously stayed, it was important to me that the code be minimalistic; IDLs will
 often clutter you repository with a lot of junk you don't need. I understand that it might slow down iteration speed which is important in an industry like crypto, but in return you will get a better understanding of the contract you are working on, semantic precision and type safety while minimizing dependencies on top of that.
-- 2) Not using IDLs or Anchor allows me to deep-dive into the inner-workings of Solana programs while being a good endeavour for teaching buffers, binary data types, discriminators and basic reverse-engineering. To go from scratch, I was required to read Solana's and Anchor's code to extract the discriminators manually and understand how some event selector hashes were computed; that work is roughly documented inside the `re/doc.md` file.
+- 2) Not using IDLs or Anchor allows me to deep-dive into the inner-workings of Solana programs while being a good endeavour for teaching buffers, binary data types, discriminators and basic reverse-engineering. To go from scratch, I was required to read Solana's and Anchor's code to extract the discriminators manually and understand how some event selector hashes were computed; that work is roughly documented inside the [`re/doc.md`](./re/doc.md) file.
 
 ## Things left to do for completeness
 
