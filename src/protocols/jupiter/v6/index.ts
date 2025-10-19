@@ -20,6 +20,46 @@ import { JUPITER_V6 } from "../../../constants";
 // const routeDiscriminator = "e517cb977ae3ad2a"
 const sharedAccountRouteDiscriminator = "c1209b3341d69c81";
 const sharedAccountRouteV2Discriminator = "d19853937cfed8e9";
+const route = "e517cb977ae3ad2a";
+const routeV2 = "bb64facc31c4af14";
+
+type JupiterIxDiscriminatorKeys =
+  | typeof sharedAccountRouteDiscriminator
+  | typeof sharedAccountRouteV2Discriminator
+  | typeof route
+  | typeof routeV2;
+
+interface JupiterSwapAccounts {
+  userTransferAuthorityIdx: number;
+  userSourceTokenAccountIdx: number;
+  userDestinationTokenAccountIdx: number;
+}
+
+const indexToAccountMappings: Record<
+  JupiterIxDiscriminatorKeys,
+  JupiterSwapAccounts
+> = {
+  [sharedAccountRouteDiscriminator]: {
+    userTransferAuthorityIdx: 2,
+    userSourceTokenAccountIdx: 3,
+    userDestinationTokenAccountIdx: 6,
+  },
+  [sharedAccountRouteV2Discriminator]: {
+    userTransferAuthorityIdx: 1,
+    userSourceTokenAccountIdx: 2,
+    userDestinationTokenAccountIdx: 5,
+  },
+  [route]: {
+    userTransferAuthorityIdx: 1,
+    userSourceTokenAccountIdx: 2,
+    userDestinationTokenAccountIdx: 3,
+  },
+  [routeV2]: {
+    userTransferAuthorityIdx: 0,
+    userSourceTokenAccountIdx: 1,
+    userDestinationTokenAccountIdx: 2,
+  },
+};
 
 /* ---- EVENTS DISCRIMINATORS ---- */
 // event:SwapEvent -> Individual swap (legacy)
@@ -146,20 +186,21 @@ export const handleJupiterSwap = ({
   const isSharedAccountRouteV2 =
     data.subarray(0, 8).toHex() === sharedAccountRouteV2Discriminator;
 
-  const transferAuthorityIdx = isSharedAccountRoute ? 2 : 1;
-  const destinationTokenAccIdx = isSharedAccountRoute
-    ? 6
-    : isSharedAccountRouteV2
-      ? 5
-      : 3;
+  const discriminator = data.subarray(0, 8).toHex();
+  const {
+    userTransferAuthorityIdx,
+    userSourceTokenAccountIdx,
+    userDestinationTokenAccountIdx,
+  } = indexToAccountMappings[discriminator as JupiterIxDiscriminatorKeys]!;
 
   const swap = parseSwapCi(jupiterCpis);
 
   return {
     ...swap,
-    userTransferAuthority: accounts[transferAuthorityIdx]!.address,
-    userSourceTokenAccount: accounts[transferAuthorityIdx + 1]!.address,
-    userDestinationTokenAccount: accounts[destinationTokenAccIdx]!.address,
+    userTransferAuthority: accounts[userTransferAuthorityIdx]!.address,
+    userSourceTokenAccount: accounts[userSourceTokenAccountIdx]!.address,
+    userDestinationTokenAccount:
+      accounts[userDestinationTokenAccountIdx]!.address,
   };
 };
 

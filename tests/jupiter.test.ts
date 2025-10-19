@@ -53,7 +53,7 @@ describe("jupiter_v6 parser", () => {
     });
   });
 
-  it("should parse $USDC to $PMX", async () => {
+  it("should parse $USDC to $PMX (shared_accounts_route_v2)", async () => {
     const { type, swaps } = await analyzeTransaction(
       rpc,
       "41A15rgf8AFVq4Egsygf8PMw7soEtgjpFwn9NjVPQT91N2iv5Q11QL8nj2EoeQiGz7hG2vCKzctdLkXnqkuEAJKP" as Signature,
@@ -73,6 +73,29 @@ describe("jupiter_v6 parser", () => {
         "CFQLXdEqnKdbR2c4MtXwAjsTHNFKVK3qna26bfBFQyhH" as Address,
       userDestinationTokenAccount:
         "EA8X67zwF2TPxWFa41kGyVyaZh9uHYT6szLUKvPzVWWx" as Address,
+    });
+  });
+
+  it("should parse $WSOL to $PM", async () => {
+    const { type, swaps } = await analyzeTransaction(
+      rpc,
+      "2xRQGcC2xJFBQ4c5wa71uDpj4GwjpiDkGX83GQxL9P97iwLiJkKymR3CpyP6as8tjMK2hZ2iuDg997nrRLXD4UeY" as Signature,
+    );
+
+    expect(type).toStrictEqual("SWAP");
+    expect(swaps.length).toStrictEqual(1);
+    expect(swaps[0]).toStrictEqual({
+      amm: undefined,
+      inputMint: "So11111111111111111111111111111111111111112" as Address,
+      inputAmount: 1998000000n,
+      outputMint: "3BWA5RBXyPXuMGZmVL8Snefu573FMJNGpsVi79baiBLV" as Address,
+      outputAmount: 1028930656946266n,
+      userTransferAuthority:
+        "5MMuAkw6rHkdSrPMadKGUbKJxGg8jpUJR8rsiAQYFrvP" as Address,
+      userSourceTokenAccount:
+        "Cuv4tPTgrHHAnoCZ5e1r39foHcwSXL1GsDGiumntaGwM" as Address,
+      userDestinationTokenAccount:
+        "Fbtx4bGd3pdPYU3HRqKAsRDb4oS9R2CdhKoEv6xMKjpX" as Address,
     });
   });
 });
