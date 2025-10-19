@@ -52,4 +52,27 @@ describe("jupiter_v6 parser", () => {
         "GobPXLzbZVEgxGFSJ3FK6CiHCncAMt3mkDCTDVzsYnP7" as Address,
     });
   });
+
+  it("should parse $USDC to $PMX", async () => {
+    const { type, swaps } = await analyzeTransaction(
+      rpc,
+      "41A15rgf8AFVq4Egsygf8PMw7soEtgjpFwn9NjVPQT91N2iv5Q11QL8nj2EoeQiGz7hG2vCKzctdLkXnqkuEAJKP" as Signature,
+    );
+
+    expect(type).toStrictEqual("SWAP");
+    expect(swaps.length).toStrictEqual(1);
+    expect(swaps[0]).toStrictEqual({
+      amm: undefined,
+      inputMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" as Address,
+      inputAmount: 698740000n,
+      outputMint: "3BWA5RBXyPXuMGZmVL8Snefu573FMJNGpsVi79baiBLV" as Address,
+      outputAmount: 1550148885966710n,
+      userTransferAuthority:
+        "71mbBqEq5XbrQTeg3K5qEV61uFmHe5Du5z1MtFDswGt" as Address,
+      userSourceTokenAccount:
+        "CFQLXdEqnKdbR2c4MtXwAjsTHNFKVK3qna26bfBFQyhH" as Address,
+      userDestinationTokenAccount:
+        "EA8X67zwF2TPxWFa41kGyVyaZh9uHYT6szLUKvPzVWWx" as Address,
+    });
+  });
 });

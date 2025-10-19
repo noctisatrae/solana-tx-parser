@@ -19,12 +19,13 @@ import { JUPITER_V6 } from "../../../constants";
 /* ---- IX DISCRIMINATORS ---- */
 // const routeDiscriminator = "e517cb977ae3ad2a"
 const sharedAccountRouteDiscriminator = "c1209b3341d69c81";
+const sharedAccountRouteV2Discriminator = "d19853937cfed8e9";
 
 /* ---- EVENTS DISCRIMINATORS ---- */
 // event:SwapEvent -> Individual swap (legacy)
-export const swapEventDiscriminator = "40c6cde8260871e2";
+const swapEventDiscriminator = "40c6cde8260871e2";
 // event:SwapsEvent -> Array of swaps (struct SwapEventV2)
-export const swapsEventDiscriminator = "982f4eebc0606e6a";
+const swapsEventDiscriminator = "982f4eebc0606e6a";
 
 // I'm forcing myself to use @solana/kit's shitty decoder syntax but for my production system
 // I use web3.js alongside borsher :)
@@ -39,7 +40,7 @@ export const swapsEventDiscriminator = "982f4eebc0606e6a";
 //   outputAmount: BorshSchema.u64,
 // })
 // ------------------------------------------------------
-export const SwapEventCpi = getStructDecoder([
+const SwapEventCpi = getStructDecoder([
   // again, why is it that called "decoder" while the 32-byte sized hexadecimal representation is the purest?
   // it's an encoder so it becomes human readable thanks to base-58. Still, I gotta give them props for this utility.
   // It will make my life easier; much better than parsing manually like with Borsher.
@@ -48,6 +49,20 @@ export const SwapEventCpi = getStructDecoder([
   ["inputAmount", getU64Decoder()],
   ["outputMint", getAddressDecoder()],
   ["outputAmount", getU64Decoder()],
+]);
+
+const SwapsEventCpi = getStructDecoder([
+  [
+    "swapsEvent",
+    getArrayDecoder(
+      getStructDecoder([
+        ["inputMint", getAddressDecoder()],
+        ["inputAmount", getU64Decoder()],
+        ["outputMint", getAddressDecoder()],
+        ["outputAmount", getU64Decoder()],
+      ]),
+    ),
+  ],
 ]);
 
 interface JupiterSwapDecoderArgs extends SimpleDecoderArgs {
@@ -128,8 +143,15 @@ export const handleJupiterSwap = ({
   // we need some accounts from the calldata so we need to know how arguments are mapped to the account list
   const isSharedAccountRoute =
     data.subarray(0, 8).toHex() === sharedAccountRouteDiscriminator;
+  const isSharedAccountRouteV2 =
+    data.subarray(0, 8).toHex() === sharedAccountRouteV2Discriminator;
+
   const transferAuthorityIdx = isSharedAccountRoute ? 2 : 1;
-  const destinationTokenAccIdx = isSharedAccountRoute ? 6 : 3;
+  const destinationTokenAccIdx = isSharedAccountRoute
+    ? 6
+    : isSharedAccountRouteV2
+      ? 5
+      : 3;
 
   const swap = parseSwapCi(jupiterCpis);
 
@@ -143,17 +165,17 @@ export const handleJupiterSwap = ({
 
 const parseSwapCi = (cpiIxs: JupiterCpiIx[]): RawSwap => {
   // todo filter decoder to use depending on the discriminator
-  const parsedCpis: RawSwap[] = cpiIxs.map((cpiIx) => {
-    // Decode the swap event from the CPI data
-    const swapEvent = SwapEventCpi.decode(cpiIx.data, 16);
-
-    return {
-      amm: swapEvent.amm,
-      inputMint: swapEvent.inputMint,
-      inputAmount: swapEvent.inputAmount,
-      outputMint: swapEvent.outputMint,
-      outputAmount: swapEvent.outputAmount,
-    };
+  const parsedCpis: RawSwap[] = cpiIxs.flatMap((cpiIx) => {
+    switch (cpiIx.discriminator) {
+      case swapEventDiscriminator:
+        return SwapEventCpi.decode(cpiIx.data, 16);
+      case swapsEventDiscriminator:
+        return SwapsEventCpi.decode(cpiIx.data, 16).swapsEvent;
+      default:
+        throw new Error(
+          `Unknown Jupiter CPI instruction discriminator: ${cpiIx.discriminator}`,
+        );
+    }
   });
 
   const firstEvent = parsedCpis[0]!;
