@@ -49,4 +49,6 @@ jobs:
         run: bun biome ci . --error-on-warnings
 
       - name: Run Test
-        run: TESTRUNNER_RPC=${{ secrets.TESTRUNNER_RPC }} bun test
+        run: bun test
+        env:
+          TESTRUNNER_RPC: ${{ secrets.TESTRUNNER_RPC }}
