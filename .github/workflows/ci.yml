@@ -43,7 +43,7 @@ jobs:
         run: bun ci
 
       - name: Type check
-        run: bun tsc
+        run: bun typecheck
 
       - name: Run Biome
         run: bun biome ci . --error-on-warnings

@@ -1,5 +1,5 @@
 {
-	"name": "solsauce",
+	"name": "@noctisatrae/solana-tx-parser",
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"exports": {
@@ -26,6 +26,7 @@
 	"scripts": {
 		"fmt": "biome format --write",
 		"lint": "biome lint --write",
+		"typecheck": "bun tsc",
 		"build": "bun build --production --keep-names src/index.ts --outdir=dist/ && tsc --project tsconfig.build.json"
 	},
 	"peerDependencies": {
