@@ -15,8 +15,8 @@ often clutter your repository with a lot of junk that you do not need. I underst
 
 - [X] `route`
 - [X] `shared_accounts_route`
-- [ ] `route_v2`
-- [ ] `shared_accounts_route_v2`
+- [X] `route_v2`
+- [X] `shared_accounts_route_v2`
 
 ## Jupiter Order Engine
 
